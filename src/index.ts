@@ -1,26 +1,18 @@
-import "reflect-metadata";
-import * as tq from "type-graphql";
-import { PostCreateInput, PostResolver, SortOrder } from "./PostResover";
-import { UserResolver } from "./UserResover";
-import { ApolloServer } from "apollo-server";
-import { DateTimeResolver } from "graphql-scalars";
-import { context } from "./context";
-import { GraphQLScalarType } from "graphql";
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from "@apollo/server/standalone";
+import typeDefs from "./typeDefs.js";
+import resolvers from "./resolvers/index.js";
+import { prisma, Context } from "./context.js";
 
-const app = async () => {
-  tq.registerEnumType(SortOrder, {
-    name: "SortOrder",
+try {
+  const server = new ApolloServer<Context>({ typeDefs, resolvers });
+  const { url } = await startStandaloneServer(server, {
+    context: async () => ({ prisma }),
+    listen: {
+      port: 4000,
+    },
   });
-
-  const schema = await tq.buildSchema({
-    resolvers: [PostResolver, UserResolver, PostCreateInput],
-    scalarsMap: [{ type: GraphQLScalarType, scalar: DateTimeResolver }],
-  });
-
-  new ApolloServer({ schema, context: context }).listen({ port: 4000 }, () =>
-    console.log(`
-🚀 Server ready at: http://localhost:4000`)
-  );
-};
-
-app();
+  console.log(`🚀 Server ready at: ${url}`);
+} catch (err) {
+  console.error(err);
+}

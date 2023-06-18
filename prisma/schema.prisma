@@ -3,9 +3,19 @@ generator client {
   // output   = "../generated/client"
 }
 
+// generator typegraphql {
+//   provider = "typegraphql-prisma"
+// }
+
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model task {
+  id       Int     @id @default(autoincrement())
+  name     String
+  finished Boolean @default(false)
 }
 
 /// User info
@@ -13,7 +23,7 @@ model User {
   id      Int      @id @default(autoincrement())
   name    String
   email   String   @unique
-  role    Role     @default(USER)
+  role    Role?    @default(USER)
   posts   Post[]
   profile Profile? /// 简介
 

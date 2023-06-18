@@ -163,3 +163,13 @@ CRUD
 关系
 
 - one-to-many
+
+Typegraphql-prisma
+
+```bash
+yarn add typegraphql-prisma -D
+yarn add graphql-scalars graphql-fields @types/graphql-fields ts-lib
+
+SKIP_PRISMA_VERSION_CHECK=true yarn prisma generate
+
+```
